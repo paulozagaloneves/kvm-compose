@@ -1,5 +1,7 @@
 # KVM Compose
 
+Versão 0.1.0 Codename: "Gambiarra" - Dezembro de 2025
+
 🖥️ **kvm-compose** é uma ferramenta moderna escrita em **Go** que simplifica o gerenciamento de máquinas virtuais KVM usando workflows similares ao Docker Compose.
 
 ## ✨ Principais Melhorias da Versão Go
@@ -95,16 +97,46 @@ Here's a simple example of a `kvm-compose.yaml` file:
 ### Configuration Parameters
 
 - **name**: VM identifier (required)
-- **memory**: RAM in MB (default: 4096)
-- **vcpus**: Number of virtual CPUs (default: 4)
-- **disk_size**: Disk size in GB (default: 20)
-- **username**: SSH user (default: debian)
-- **ssh_key_file**: Path to SSH public key
+- **memory**: RAM in MB (default: 2048)
+- **vcpus**: Number of virtual CPUs (default: 2)
+- **disk_size**: Disk size in GB (default: 2)
+- **username**: SSH user (default from config.ini or "debian")
+- **ssh_key_file**: Path to SSH public key (default from config.ini)
 - **networks**: Network configuration
   - **bridge**: Network bridge (default: br0)
   - **ipv4**: Static IP address
-  - **gateway**: Network gateway
-  - **nameservers**: DNS servers array
+  - **gateway**: Network gateway (default from config.ini)
+  - **nameservers**: DNS servers array (default from config.ini)
+
+## ⚙️ Configuration File (config.ini)
+
+O kvm-compose agora suporta um arquivo de configuração opcional que define valores padrão. O arquivo é procurado em:
+
+1. `./config.ini` (diretório atual)
+2. `~/.config/kvm-compose/config.ini` (diretório do usuário)
+
+### Exemplo de config.ini:
+
+```ini
+[main]
+username = debian
+ssh_key_file = ~/.ssh/id_ed25519.pub
+
+[network]
+gateway = 192.168.1.1
+nameservers = 1.1.1.1, 8.8.8.8
+
+[images]
+path_upstream_images = ~/.config/kvm-compose/images/upstream
+path_vm_images = ~/.config/kvm-compose/images/vm
+```
+
+### Benefícios da Configuração:
+
+- 📂 **Organização**: Imagens separadas por tipo (base vs VMs)
+- 🔧 **Defaults**: Valores padrão configuráveis por projeto/usuário  
+- 🏠 **Diretórios**: Imagens organizadas em ~/.config/kvm-compose/
+- ♻️ **Reutilização**: Imagens base compartilhadas entre projetos
 
 ## 🎯 Available Commands
 
@@ -176,5 +208,4 @@ make clean       # Limpe build artifacts
 GNU GENERAL PUBLIC LICENSE Version 3
 
 ---
-
-**Note:** Replace placeholders and customize instructions as needed for your script.
+© 2025 Paulo Neves. Todos os direitos reservados.

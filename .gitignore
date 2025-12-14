@@ -1,2 +1,16 @@
 # Ignore all .qcow2 files
 *.qcow2
+
+.idea/
+.vscode/
+*.log
+*.tmp
+*.bak
+*.swp
+.DS_Store
+thumbs.db
+.env
+
+# Ignore compiled binaries
+build/
+# Ignore generated files

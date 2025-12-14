@@ -1,0 +1,42 @@
+# k8s control plane
+- name: k8s-cp-01
+  distro: debian-13
+  memory: 4096
+  vcpus: 4
+  disk_size: 20
+  username: debian
+  group: ['k8s-cluster']
+  ssh_key_file: ~/.ssh/id_ed25519.pub
+  networks:
+    - bridge: br0
+      ipv4: 192.168.1.40
+      gateway: 192.168.1.1
+      nameservers: [1.1.1.1, 8.8.8.8]
+# k8s worker 1
+- name: k8s-wrk-01
+  distro: debian-13
+  memory: 4096
+  vcpus: 4
+  disk_size: 20
+  username: debian
+  group: ['k8s-cluster']
+  ssh_key_file: ~/.ssh/id_ed25519.pub
+  networks:
+    - bridge: br0
+      ipv4: 192.168.1.41
+      gateway: 192.168.1.1
+      nameservers: [1.1.1.1, 8.8.8.8]
+# k8s worker 2
+- name: k8s-wrk-02
+  distro: debian-13
+  memory: 4096
+  vcpus: 4
+  disk_size: 20
+  username: debian
+  group: ['k8s-cluster']
+  ssh_key_file: ~/.ssh/id_ed25519.pub
+  networks:
+    - bridge: br0
+      ipv4: 192.168.1.42
+      gateway: 192.168.1.1
+      nameservers: [1.1.1.1, 8.8.8.8]

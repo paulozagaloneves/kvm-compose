@@ -1,0 +1,25 @@
+# Exemplo de arquivo de configuração para kvm-compose
+# Este arquivo pode estar em:
+# - ./config.ini (diretório atual)  
+# - ~/.config/kvm-compose/config.ini (diretório de configuração do usuário)
+
+[main]
+# Usuário padrão para as VMs criadas
+username = debian
+
+# Arquivo de chave SSH pública padrão
+ssh_key_file = ~/.ssh/id_ed25519.pub
+
+[network] 
+# Gateway padrão para as VMs
+gateway = 192.168.1.1
+
+# Nameservers padrão (separados por vírgula)
+nameservers = 1.1.1.1,8.8.8.8
+
+[images]
+# Diretório onde armazenar imagens base baixadas da internet
+path_upstream_images = ~/.config/kvm-compose/images/upstream
+
+# Diretório onde armazenar as imagens das VMs criadas
+path_vm_images = ~/.config/kvm-compose/images/vm

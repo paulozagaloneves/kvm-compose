@@ -10,20 +10,46 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+	"gopkg.in/ini.v1"
 	"gopkg.in/yaml.v2"
 )
 
+// AppConfig representa as configurações globais da aplicação
+type AppConfig struct {
+	Main    MainConfig    `ini:"main"`
+	Network NetworkConfig `ini:"network"`
+	Images  ImagesConfig  `ini:"images"`
+}
+
+// MainConfig representa configurações principais
+type MainConfig struct {
+	Username   string `ini:"username"`
+	SSHKeyFile string `ini:"ssh_key_file"`
+}
+
+// NetworkConfig representa configurações de rede
+type NetworkConfig struct {
+	Gateway     string `ini:"gateway"`
+	Nameservers string `ini:"nameservers"`
+}
+
+// ImagesConfig representa configurações de imagens
+type ImagesConfig struct {
+	PathUpstreamImages string `ini:"path_upstream_images"`
+	PathVMImages       string `ini:"path_vm_images"`
+}
+
 // VM representa uma máquina virtual no arquivo de configuração
 type VM struct {
-	Name        string    `yaml:"name"`
-	Distro      string    `yaml:"distro"`
-	Memory      int       `yaml:"memory"`
-	VCPUs       int       `yaml:"vcpus"`
-	DiskSize    int       `yaml:"disk_size"`
-	Username    string    `yaml:"username"`
-	Group       []string  `yaml:"group"`
-	SSHKeyFile  string    `yaml:"ssh_key_file"`
-	Networks    []Network `yaml:"networks"`
+	Name       string    `yaml:"name"`
+	Distro     string    `yaml:"distro"`
+	Memory     int       `yaml:"memory"`
+	VCPUs      int       `yaml:"vcpus"`
+	DiskSize   int       `yaml:"disk_size"`
+	Username   string    `yaml:"username"`
+	Group      []string  `yaml:"group"`
+	SSHKeyFile string    `yaml:"ssh_key_file"`
+	Networks   []Network `yaml:"networks"`
 }
 
 // Network representa a configuração de rede de uma VM
@@ -43,13 +69,81 @@ type Config struct {
 type KVMCompose struct {
 	composeFile string
 	config      Config
+	appConfig   *AppConfig
 }
 
 // NewKVMCompose cria uma nova instância do KVMCompose
 func NewKVMCompose(composeFile string) *KVMCompose {
+	appConfig := loadAppConfig()
 	return &KVMCompose{
 		composeFile: composeFile,
+		appConfig:   appConfig,
 	}
+}
+
+// loadAppConfig carrega o arquivo de configuração INI
+func loadAppConfig() *AppConfig {
+	// Configurações padrão
+	config := &AppConfig{
+		Main: MainConfig{
+			Username:   "admin",
+			SSHKeyFile: "~/.ssh/id_rsa.pub",
+		},
+		Network: NetworkConfig{
+			Gateway:     "192.168.1.1",
+			Nameservers: "1.1.1.1,8.8.8.8",
+		},
+		Images: ImagesConfig{
+			PathUpstreamImages: "~/.config/kvm-compose/images/upstream",
+			PathVMImages:       "~/.config/kvm-compose/images/vm",
+		},
+	}
+
+	// Caminhos para procurar o arquivo config.ini
+	configPaths := []string{
+		"./config.ini", // Diretório corrente
+		expandPath("~/.config/kvm-compose/config.ini"), // Diretório de configuração do usuário
+	}
+
+	// Tentar carregar configuração de cada caminho
+	for _, configPath := range configPaths {
+		if _, err := os.Stat(configPath); err == nil {
+			cfg, err := ini.Load(configPath)
+			if err != nil {
+				color.Yellow("⚠️  Erro ao carregar %s: %v", configPath, err)
+				continue
+			}
+
+			// Fazer unmarshal das configurações
+			if err := cfg.MapTo(config); err != nil {
+				color.Yellow("⚠️  Erro ao fazer parse do %s: %v", configPath, err)
+				continue
+			}
+
+			color.Green("✅ Configuração carregada de: %s", configPath)
+			break
+		}
+	}
+
+	return config
+}
+
+// getDefaultValues retorna valores padrão baseados na configuração
+func (kvm *KVMCompose) getDefaultValues() (string, string, string, []string) {
+	username := kvm.appConfig.Main.Username
+	sshKeyFile := kvm.appConfig.Main.SSHKeyFile
+	gateway := kvm.appConfig.Network.Gateway
+
+	// Converter nameservers de string para slice
+	// Remover colchetes se presentes e fazer split
+	nameserversStr := strings.TrimSpace(kvm.appConfig.Network.Nameservers)
+	nameserversStr = strings.Trim(nameserversStr, "[]")
+	nameservers := strings.Split(nameserversStr, ",")
+	for i, ns := range nameservers {
+		nameservers[i] = strings.TrimSpace(ns)
+	}
+
+	return username, sshKeyFile, gateway, nameservers
 }
 
 // loadConfig carrega o arquivo YAML de configuração
@@ -127,6 +221,9 @@ func readSSHKey(keyFile string) (string, error) {
 
 // createCloudInitFiles cria os arquivos cloud-init para uma VM
 func (kvm *KVMCompose) createCloudInitFiles(vm *VM) error {
+	// Obter valores padrão da configuração
+	defaultUsername, defaultSSHKeyFile, defaultGateway, defaultNameservers := kvm.getDefaultValues()
+
 	// Aplicar valores padrão
 	if vm.Memory == 0 {
 		vm.Memory = 4096
@@ -138,15 +235,21 @@ func (kvm *KVMCompose) createCloudInitFiles(vm *VM) error {
 		vm.DiskSize = 20
 	}
 	if vm.Username == "" {
-		vm.Username = "debian"
+		vm.Username = defaultUsername
+	}
+
+	// Determinar qual arquivo de chave SSH usar
+	sshKeyFile := vm.SSHKeyFile
+	if sshKeyFile == "" {
+		sshKeyFile = defaultSSHKeyFile
 	}
 
 	// Ler chave SSH
 	sshKey := ""
-	if vm.SSHKeyFile != "" {
-		key, err := readSSHKey(vm.SSHKeyFile)
+	if sshKeyFile != "" {
+		key, err := readSSHKey(sshKeyFile)
 		if err != nil {
-			color.Yellow("⚠️  Aviso: Não foi possível ler a chave SSH: %v", err)
+			color.Yellow("⚠️  Aviso: Não foi possível ler a chave SSH %s: %v", sshKeyFile, err)
 		} else {
 			sshKey = key
 		}
@@ -163,7 +266,7 @@ users:
     lock_passwd: false
 `, vm.Username, sshKey)
 
-	err := ioutil.WriteFile(vm.Name+"-user-data.yaml", []byte(userData), 0644)
+	err := os.WriteFile(vm.Name+"-user-data.yaml", []byte(userData), 0644)
 	if err != nil {
 		return err
 	}
@@ -174,10 +277,10 @@ users:
 		network.Bridge = "br0"
 	}
 	if network.Gateway == "" {
-		network.Gateway = "192.168.1.1"
+		network.Gateway = defaultGateway
 	}
 	if len(network.Nameservers) == 0 {
-		network.Nameservers = []string{"1.1.1.1", "8.8.8.8"}
+		network.Nameservers = defaultNameservers
 	}
 
 	nsYAML := ""
@@ -212,21 +315,49 @@ local-hostname: %s
 
 // cleanupCloudInitFiles remove os arquivos temporários de cloud-init
 func cleanupCloudInitFiles(vmName string) {
-	os.Remove(vmName + "-user-data.yaml")
-	os.Remove(vmName + "-network-config.yaml")
-	os.Remove(vmName + "-meta-data.yaml")
+	//os.Remove(vmName + "-user-data.yaml")
+	//os.Remove(vmName + "-network-config.yaml")
+	//os.Remove(vmName + "-meta-data.yaml")
 }
 
 // downloadBaseImage baixa a imagem base do Debian se não existir
-func downloadBaseImage() error {
-	imageName := "debian-13-genericcloud-amd64.qcow2"
-	if _, err := os.Stat(imageName); os.IsNotExist(err) {
-		color.Cyan("📥 Baixando imagem base do Debian 13...")
-		url := "https://cdimage.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2"
-		return execCommand("wget", "-O", imageName, url)
+func (kvm *KVMCompose) downloadBaseImage() error {
+	// Criar diretórios se não existirem
+	upstreamDir := expandPath(kvm.appConfig.Images.PathUpstreamImages)
+	err := os.MkdirAll(upstreamDir, 0755)
+	if err != nil {
+		color.Yellow("⚠️  Erro ao criar diretório %s: %v", upstreamDir, err)
+		upstreamDir = "." // Fallback para diretório atual
 	}
-	color.Green("✅ Imagem base já existe, pulando download...")
+
+	imageName := "debian-13-genericcloud-amd64.qcow2"
+	imagePath := filepath.Join(upstreamDir, imageName)
+
+	if _, err := os.Stat(imagePath); os.IsNotExist(err) {
+		color.Cyan("📥 Baixando imagem base do Debian 13...")
+		color.Cyan("📂 Salvando em: %s", imagePath)
+		url := "https://cdimage.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2"
+		return execCommand("wget", "-O", imagePath, url)
+	}
+	color.Green("✅ Imagem base já existe: %s", imagePath)
 	return nil
+}
+
+// getBaseImagePath retorna o caminho da imagem base
+func (kvm *KVMCompose) getBaseImagePath() string {
+	upstreamDir := expandPath(kvm.appConfig.Images.PathUpstreamImages)
+	return filepath.Join(upstreamDir, "debian-13-genericcloud-amd64.qcow2")
+}
+
+// getVMImagePath retorna o caminho para a imagem da VM
+func (kvm *KVMCompose) getVMImagePath(vmName string) string {
+	vmImagesDir := expandPath(kvm.appConfig.Images.PathVMImages)
+	err := os.MkdirAll(vmImagesDir, 0755)
+	if err != nil {
+		color.Yellow("⚠️  Erro ao criar diretório %s: %v", vmImagesDir, err)
+		return vmName + ".qcow2" // Fallback para diretório atual
+	}
+	return filepath.Join(vmImagesDir, vmName+".qcow2")
 }
 
 // Up cria e inicia todas as VMs
@@ -239,7 +370,7 @@ func (kvm *KVMCompose) Up() error {
 	color.Cyan("=== Criando todas as VMs do compose ===")
 
 	// Baixar imagem base
-	if err := downloadBaseImage(); err != nil {
+	if err := kvm.downloadBaseImage(); err != nil {
 		return fmt.Errorf("erro ao baixar imagem base: %v", err)
 	}
 
@@ -266,15 +397,19 @@ func (kvm *KVMCompose) Up() error {
 		fmt.Printf("  Disco: %dGB\n", vm.DiskSize)
 		fmt.Printf("  Bridge: %s\n", vm.Networks[0].Bridge)
 
-		// Copiar imagem
-		err := execCommand("cp", "debian-13-genericcloud-amd64.qcow2", vm.Name+".qcow2")
+		// Copiar imagem base para imagem da VM
+		baseImagePath := kvm.getBaseImagePath()
+		vmImagePath := kvm.getVMImagePath(vm.Name)
+
+		color.Cyan("📋 Copiando: %s → %s", baseImagePath, vmImagePath)
+		err := execCommand("cp", baseImagePath, vmImagePath)
 		if err != nil {
 			color.Red("❌ Erro ao copiar imagem para %s: %v", vm.Name, err)
 			continue
 		}
 
 		// Ajustar permissões
-		execCommand("sudo", "chmod", "644", vm.Name+".qcow2")
+		execCommand("sudo", "chmod", "644", vmImagePath)
 
 		// Criar arquivos cloud-init
 		err = kvm.createCloudInitFiles(&vm)
@@ -290,7 +425,7 @@ func (kvm *KVMCompose) Up() error {
 			"--memory", fmt.Sprintf("%d", vm.Memory),
 			"--vcpus", fmt.Sprintf("%d", vm.VCPUs),
 			"--os-variant", "debian13",
-			"--disk", fmt.Sprintf("%s.qcow2,size=%d,format=qcow2", vm.Name, vm.DiskSize),
+			"--disk", fmt.Sprintf("%s,size=%d,format=qcow2", vmImagePath, vm.DiskSize),
 			"--network", fmt.Sprintf("bridge=%s,model=virtio", vm.Networks[0].Bridge),
 			"--graphics", "spice,listen=0.0.0.0",
 			"--noautoconsole",
@@ -447,10 +582,10 @@ func (kvm *KVMCompose) Down() error {
 		}
 
 		// Remover arquivo de disco
-		diskFile := vm.Name + ".qcow2"
-		if _, err := os.Stat(diskFile); err == nil {
-			os.Remove(diskFile)
-			color.Blue("💾 Arquivo de disco %s removido", diskFile)
+		vmImagePath := kvm.getVMImagePath(vm.Name)
+		if _, err := os.Stat(vmImagePath); err == nil {
+			os.Remove(vmImagePath)
+			color.Blue("💾 Arquivo de disco %s removido", vmImagePath)
 		}
 		fmt.Println()
 	}
@@ -470,10 +605,24 @@ func (kvm *KVMCompose) List() error {
 		return err
 	}
 
+	fmt.Println()
 	color.Cyan("=== VMs disponíveis no %s ===", kvm.composeFile)
 
-	fmt.Printf("%-15s\t%-8s\t%-5s\t%-5s\t%-15s\t%-15s\n", "Nome", "Memória", "vCPUs", "Disco", "IP", "Status")
-	fmt.Printf("%-15s\t%-8s\t%-5s\t%-5s\t%-15s\t%-15s\n", "----", "-------", "-----", "-----", "--", "------")
+	color.New(color.FgGreen, color.Bold).Printf("%-15s %-10s %-6s %-8s %-16s %-18s\n",
+		strings.Repeat("-", 15),
+		strings.Repeat("-", 10),
+		strings.Repeat("-", 6),
+		strings.Repeat("-", 8),
+		strings.Repeat("-", 16),
+		strings.Repeat("-", 18))
+	color.New(color.FgGreen, color.Bold).Printf("%-15s %-10s %-6s %-8s %-16s %-18s\n", "Nome", "Memória", "vCPUs", "Disco", "IP", "Status")
+	color.New(color.FgGreen, color.Bold).Printf("%-15s %-10s %-6s %-8s %-16s %-18s\n",
+		strings.Repeat("-", 15),
+		strings.Repeat("-", 10),
+		strings.Repeat("-", 6),
+		strings.Repeat("-", 8),
+		strings.Repeat("-", 16),
+		strings.Repeat("-", 18))
 
 	for _, vm := range kvm.config.VMs {
 		// Aplicar valores padrão
@@ -513,8 +662,13 @@ func (kvm *KVMCompose) List() error {
 			}
 		}
 
-		fmt.Printf("%-15s\t%dMB\t%d\t%dGB\t%-15s\t%s\n",
-			vm.Name, memory, vcpus, diskSize, ip, statusText)
+		// Formatar dados com larguras fixas
+		memoryStr := fmt.Sprintf("%dMB", memory)
+		vcpusStr := fmt.Sprintf("%d", vcpus)
+		diskStr := fmt.Sprintf("%dGB", diskSize)
+
+		fmt.Printf("%-15s %-10s %-6s %-8s %-16s %-18s\n",
+			vm.Name, memoryStr, vcpusStr, diskStr, ip, statusText)
 	}
 
 	return nil
@@ -524,7 +678,7 @@ func (kvm *KVMCompose) List() error {
 func showBanner() {
 	color.Cyan("============================================================")
 	color.New(color.FgGreen, color.Bold).Println("🖥️  kvm-compose - Gerenciador de VMs KVM via arquivo compose")
-	color.New(color.FgYellow, color.Bold).Println("📦 Versão: 1.0.0 Codename: \"Gopher Power\" - Dezembro de 2025")
+	color.New(color.FgYellow, color.Bold).Println("📦 Versão: 0.1.0 Codename: \"Gambiarra\" - Dezembro de 2025")
 	color.Cyan("============================================================")
 	fmt.Println()
 }
@@ -549,6 +703,11 @@ var (
 				color.Red("Erro: %v", err)
 				os.Exit(1)
 			}
+			// After successful Up, run List to show VMs/status
+			if err := kvm.List(); err != nil {
+				color.Red("Erro: %v", err)
+				os.Exit(1)
+			}
 		},
 	}
 
@@ -561,6 +720,11 @@ var (
 				color.Red("Erro: %v", err)
 				os.Exit(1)
 			}
+			// After successful Up, run List to show VMs/status
+			if err := kvm.List(); err != nil {
+				color.Red("Erro: %v", err)
+				os.Exit(1)
+			}
 		},
 	}
 
@@ -570,6 +734,11 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			kvm := NewKVMCompose(composeFile)
 			if err := kvm.Stop(); err != nil {
+				color.Red("Erro: %v", err)
+				os.Exit(1)
+			}
+			// After successful Stop, run List to show VMs/status
+			if err := kvm.List(); err != nil {
 				color.Red("Erro: %v", err)
 				os.Exit(1)
 			}
