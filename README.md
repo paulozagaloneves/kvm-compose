@@ -28,21 +28,98 @@ Versão 0.1.0 Codename: "Gambiarra" - Dezembro de 2025
 - `wget` for downloading base images
 - SSH key pair configured
 
-### 🐧 Installation on Ubuntu/Debian
+### 🐧 Install KVM on Ubuntu/Debian
+
 
 ```bash
 # Instalar KVM e dependências
 sudo apt update
-sudo apt install qemu-kvm libvirt-clients virtinst bridge-utils wget
-
-# Instalar Go (se não tiver)
-sudo apt install golang-go
-
-# Ou baixar a versão mais recente:
-# https://golang.org/dl/
+sudo apt install -y qemu-kvm libvirt-daemon libvirt-clients bridge-utils virt-manager virtinst wget
 ```
 
+Other Tutorial sites:
+- https://cloudspinx.com/install-kvm-on-debian-with-virt-manager-and-cockpit/
+- https://sysguides.com/install-kvm-on-linux
+- https://phoenixnap.com/kb/ubuntu-install-kvm
+
+
+### Configure network bridge on Debian
+
+1. **Install the required utilities**
+
+```bash
+sudo apt update
+sudo apt install bridge-utils
+```
+
+2. **Identify your physical network interface**
+
+```bash
+ip -f inet a s
+```
+
+3. **Configure the bridge**
+
+Create a configuration file for the bridge in the /etc/network/interfaces.d/ directory. For example, create a file named br0
+
+
+```bash
+sudo nano /etc/network/interfaces.d/br0
+```
+
+Add the following configuration, replacing **eth0** with your actual interface name and adjusting the IP settings as needed:
+
+* **For a static IP:**
+  
+```
+## static ip config file for br0 ##
+auto br0
+iface br0 inet static
+address 192.168.1.100
+netmask 255.255.255.0
+gateway 192.168.1.1
+dns-nameservers 8.8.8.8 8.8.4.4
+bridge_ports eth0
+bridge_stp off
+bridge_fd 0
+```
+
+* **For a DHCP IP**
+```
+## DHCP ip config file for br0 ##
+auto br0
+iface br0 inet dhcp
+bridge_ports eth0
+```
+
+4. **Ensure the physical interface is not configured**
+   
+    Verify that the physical interface (e.g., eth0) is not configured in the main /etc/network/interfaces file. It should be managed solely by the bridge.
+
+5. **Restart the networking service**
+
+```bash
+sudo systemctl restart networking
+```
+
+6. **Verify the bridge**
+   
+   Confirm the bridge was created successfully using the brctl or bridge command:
+
+```bash
+brctl show
+# or
+bridge link
+```
+
+
+Other tutorial sites:
+- https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/
+- 
+
 ## 🚀 Quick Start
+
+
 
 1. **Clone and build:**
     ```bash
