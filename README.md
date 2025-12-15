@@ -43,7 +43,7 @@ Other Tutorial sites:
 - https://phoenixnap.com/kb/ubuntu-install-kvm
 
 
-### Configure network bridge on Debian
+### 🔧 Configure network bridge on Debian
 
 1. **Install the required utilities**
 
@@ -115,24 +115,20 @@ bridge link
 
 Other tutorial sites:
 - https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/
-- 
+
 
 ## 🚀 Quick Start
 
+1. **Install**
 
+```bash
+# Linux
+curl -L https://github.com/paulozagaloneves/kvm-compose/releases/download/0.1.0/kvm-compose-linux-amd64 -o kvm-compose
 
-1. **Clone and build:**
-    ```bash
-    git clone https://github.com/yourusername/kvm-compose.git
-    cd kvm-compose
-    
-    # Método 1: Build e instalação automática
-    make install
-    
-    # Método 2: Build manual
-    make build
-    ./build/kvm-compose --help
-    ```
+chmod +x kvm-compose
+sudo mv ./kvm-compose /usr/local/bin/kvm-compose
+```
+
 
 2. **Edit the configuration:**
     - Create or modify the `kvm-compose.yaml` file to define your VMs.
@@ -263,11 +259,11 @@ A versão Go inclui saída colorizada e emojis para melhor experiência:
 
 Para contribuir ou modificar o código:
 
+1. **Clone and build:**
 ```bash
-# Clone e configure
-git clone <repo-url>
+git clone https://github.com/yourusername/kvm-compose.git
 cd kvm-compose
-
+    
 # Instale dependências
 make deps
 
@@ -279,6 +275,7 @@ make clean       # Limpe build artifacts
 # Teste local sem instalar
 ./build/kvm-compose --help
 ```
+
 
 ## License
 
