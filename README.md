@@ -4,15 +4,6 @@ Versão 0.1.0 Codename: "Gambiarra" - Dezembro de 2025
 
 🖥️ **kvm-compose** é uma ferramenta moderna escrita em **Go** que simplifica o gerenciamento de máquinas virtuais KVM usando workflows similares ao Docker Compose.
 
-## ✨ Principais Melhorias da Versão Go
-
-- 🚀 **Performance superior** - Execução muito mais rápida que scripts Bash
-- 🛡️ **Maior robustez** - Tratamento de erros mais elegante e confiável  
-- 🎨 **Interface colorida** - Saída visual aprimorada com cores e emojis
-- 📦 **Binário único** - Fácil instalação e distribuição
-- 🔧 **Parsing YAML nativo** - Processamento mais eficiente de configurações
-- ⚡ **Concurrent operations** - Operações paralelas quando possível
-
 ## Features
 
 - Easily create, start, stop, and manage KVM VMs.
@@ -30,7 +21,6 @@ Versão 0.1.0 Codename: "Gambiarra" - Dezembro de 2025
 
 ### 🐧 Install KVM on Ubuntu/Debian
 
-
 ```bash
 # Instalar KVM e dependências
 sudo apt update
@@ -41,7 +31,6 @@ Other Tutorial sites:
 - https://cloudspinx.com/install-kvm-on-debian-with-virt-manager-and-cockpit/
 - https://sysguides.com/install-kvm-on-linux
 - https://phoenixnap.com/kb/ubuntu-install-kvm
-
 
 ### 🔧 Configure network bridge on Debian
 
@@ -62,7 +51,6 @@ ip -f inet a s
 
 Create a configuration file for the bridge in the /etc/network/interfaces.d/ directory. For example, create a file named br0
 
-
 ```bash
 sudo nano /etc/network/interfaces.d/br0
 ```
@@ -70,6 +58,7 @@ sudo nano /etc/network/interfaces.d/br0
 Add the following configuration, replacing **eth0** with your actual interface name and adjusting the IP settings as needed:
 
 * **For a static IP:**
+
   
 ```
 ## static ip config file for br0 ##
@@ -85,6 +74,7 @@ bridge_fd 0
 ```
 
 * **For a DHCP IP**
+
 ```
 ## DHCP ip config file for br0 ##
 auto br0
@@ -93,9 +83,8 @@ bridge_ports eth0
 ```
 
 4. **Ensure the physical interface is not configured**
-   
-    Verify that the physical interface (e.g., eth0) is not configured in the main /etc/network/interfaces file. It should be managed solely by the bridge.
 
+    Verify that the physical interface (e.g., eth0) is not configured in the main /etc/network/interfaces file. It should be managed solely by the bridge.
 5. **Restart the networking service**
 
 ```bash
@@ -103,7 +92,7 @@ sudo systemctl restart networking
 ```
 
 6. **Verify the bridge**
-   
+
    Confirm the bridge was created successfully using the brctl or bridge command:
 
 ```bash
@@ -112,10 +101,18 @@ brctl show
 bridge link
 ```
 
-
 Other tutorial sites:
 - https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/
 
+### Create ssh key
+
+```bash
+# Gerar uma nova chave SSH ed25519 (recomendado)
+ssh-keygen -t ed25519 -C "seu-email@exemplo.com"
+
+# Por padrão, a chave será salva em ~/.ssh/id_ed25519
+# Pressione Enter para aceitar o local padrão e defina uma senha se desejar
+```
 
 ## 🚀 Quick Start
 
@@ -129,8 +126,8 @@ chmod +x kvm-compose
 sudo mv ./kvm-compose /usr/local/bin/kvm-compose
 ```
 
-
 2. **Edit the configuration:**
+
     - Create or modify the `kvm-compose.yaml` file to define your VMs.
 
 ## Configuration Example
@@ -207,14 +204,14 @@ path_vm_images = ~/.config/kvm-compose/images/vm
 ### Benefícios da Configuração:
 
 - 📂 **Organização**: Imagens separadas por tipo (base vs VMs)
-- 🔧 **Defaults**: Valores padrão configuráveis por projeto/usuário  
+- 🔧 **Defaults**: Valores padrão configuráveis por projeto/usuário
 - 🏠 **Diretórios**: Imagens organizadas em ~/.config/kvm-compose/
 - ♻️ **Reutilização**: Imagens base compartilhadas entre projetos
 
 ## 🎯 Available Commands
 
 - 🆙 `up` - Create and start all VMs defined in the compose file
-- ▶️ `start` - Start existing VMs  
+- ▶️ `start` - Start existing VMs
 - ⏹️ `stop` - Stop running VMs (graceful shutdown)
 - ⬇️ `down` - Destroy VMs and remove disk files
 - 📋 `list` - Show VMs configuration and status with colorized output
@@ -248,7 +245,7 @@ make uninstall   # Remove do sistema
 A versão Go inclui saída colorizada e emojis para melhor experiência:
 
 - 🟢 VMs executando
-- 🔴 VMs paradas  
+- 🔴 VMs paradas
 - 🟡 VMs pausadas
 - ⚪ VMs não criadas
 - ✅ Operações bem-sucedidas
@@ -260,6 +257,7 @@ A versão Go inclui saída colorizada e emojis para melhor experiência:
 Para contribuir ou modificar o código:
 
 1. **Clone and build:**
+
 ```bash
 git clone https://github.com/yourusername/kvm-compose.git
 cd kvm-compose
@@ -276,10 +274,10 @@ make clean       # Limpe build artifacts
 ./build/kvm-compose --help
 ```
 
-
 ## License
 
 GNU GENERAL PUBLIC LICENSE Version 3
 
 ---
+
 © 2025 Paulo Neves. Todos os direitos reservados.
