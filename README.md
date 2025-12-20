@@ -1,122 +1,32 @@
+
 # KVM Compose
 
-Versão 0.1.0 Codename: "Gambiarra" - Dezembro de 2025
+Versão 0.2.0 Codinome: "Gambiarra" - Dezembro de 2025
 
-🖥️ **kvm-compose** é uma ferramenta moderna escrita em **Go** que simplifica o gerenciamento de máquinas virtuais KVM usando workflows similares ao Docker Compose.
+🖥️ **kvm-compose** é uma ferramenta moderna escrita em **Go** que simplifica o gerenciamento de máquinas virtuais KVM usando fluxos de trabalho similares ao Docker Compose.
 
-## Features
 
-- Easily create, start, stop, and manage KVM VMs.
-- Declarative configuration for VMs.
-- Streamlined workflow for development and testing.
+## Funcionalidades
 
-## 📋 Prerequisites
+- Crie, inicie, pare e gerencie VMs KVM facilmente.
+- Configuração declarativa para VMs.
+- Fluxo de trabalho simplificado para desenvolvimento e testes.
 
-- Linux with KVM support enabled
-- `qemu-kvm`, `libvirt-clients`, and `virtinst` installed
-- Network bridge configured (default: `br0`)
+---
+
+## 📋 1. Pré-requisitos
+
+- Linux com suporte ao KVM habilitado
+- `qemu-kvm`, `libvirt-clients` e `virtinst` instalados
+- Bridge de rede configurada (padrão: `br0`)
 - `Go 1.21+` (para compilação)
-- `wget` for downloading base images
-- SSH key pair configured
+- `wget` para baixar imagens base
+- Par de chaves SSH configurado
 
-### 🐧 Install KVM on Ubuntu/Debian
 
-```bash
-# Instalar KVM e dependências
-sudo apt update
-sudo apt install -y qemu-kvm libvirt-daemon libvirt-clients bridge-utils virt-manager virtinst wget
-```
+# 🚀 Início Rápido
 
-Other Tutorial sites:
-- https://cloudspinx.com/install-kvm-on-debian-with-virt-manager-and-cockpit/
-- https://sysguides.com/install-kvm-on-linux
-- https://phoenixnap.com/kb/ubuntu-install-kvm
-
-### 🔧 Configure network bridge on Debian
-
-1. **Install the required utilities**
-
-```bash
-sudo apt update
-sudo apt install bridge-utils
-```
-
-2. **Identify your physical network interface**
-
-```bash
-ip -f inet a s
-```
-
-3. **Configure the bridge**
-
-Create a configuration file for the bridge in the /etc/network/interfaces.d/ directory. For example, create a file named br0
-
-```bash
-sudo nano /etc/network/interfaces.d/br0
-```
-
-Add the following configuration, replacing **eth0** with your actual interface name and adjusting the IP settings as needed:
-
-* **For a static IP:**
-
-  
-```
-## static ip config file for br0 ##
-auto br0
-iface br0 inet static
-address 192.168.1.100
-netmask 255.255.255.0
-gateway 192.168.1.1
-dns-nameservers 8.8.8.8 8.8.4.4
-bridge_ports eth0
-bridge_stp off
-bridge_fd 0
-```
-
-* **For a DHCP IP**
-
-```
-## DHCP ip config file for br0 ##
-auto br0
-iface br0 inet dhcp
-bridge_ports eth0
-```
-
-4. **Ensure the physical interface is not configured**
-
-    Verify that the physical interface (e.g., eth0) is not configured in the main /etc/network/interfaces file. It should be managed solely by the bridge.
-5. **Restart the networking service**
-
-```bash
-sudo systemctl restart networking
-```
-
-6. **Verify the bridge**
-
-   Confirm the bridge was created successfully using the brctl or bridge command:
-
-```bash
-brctl show
-# or
-bridge link
-```
-
-Other tutorial sites:
-- https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/
-
-### Create ssh key
-
-```bash
-# Gerar uma nova chave SSH ed25519 (recomendado)
-ssh-keygen -t ed25519 -C "seu-email@exemplo.com"
-
-# Por padrão, a chave será salva em ~/.ssh/id_ed25519
-# Pressione Enter para aceitar o local padrão e defina uma senha se desejar
-```
-
-## 🚀 Quick Start
-
-1. **Install**
+1. **Instalação**
 
 ```bash
 # Linux
@@ -126,16 +36,17 @@ chmod +x kvm-compose
 sudo mv ./kvm-compose /usr/local/bin/kvm-compose
 ```
 
-2. **Edit the configuration:**
+2. **Edite a configuração:**
 
-    - Create or modify the `kvm-compose.yaml` file to define your VMs.
+  - Crie ou modifique o arquivo `kvm-compose.yaml` para definir suas VMs.
 
-## Configuration Example
 
-Here's a simple example of a `kvm-compose.yaml` file:
+## 🔧 Exemplo de Configuração
+
+Aqui está um exemplo simples de arquivo `kvm-compose.yaml`:
 
 ```yaml
-# Kubernetes control plane
+# Control plane do Kubernetes
 - name: k8s-cp-01
   distro: debian-13
   memory: 4096
@@ -149,7 +60,7 @@ Here's a simple example of a `kvm-compose.yaml` file:
       guest_gateway4: 192.168.1.1
       guest_nameservers: [1.1.1.1, 8.8.8.8]
 
-# Kubernetes worker node
+# Nó worker do Kubernetes
 - name: k8s-wrk-01
   distro: debian-13
   memory: 2048
@@ -164,26 +75,28 @@ Here's a simple example of a `kvm-compose.yaml` file:
       guest_nameservers: [1.1.1.1, 8.8.8.8]
 ```
 
-### Configuration Parameters
 
-- **name**: VM identifier (required)
-- **memory**: RAM in MB (default: 2048)
-- **vcpus**: Number of virtual CPUs (default: 2)
-- **disk_size**: Disk size in GB (default: 2)
-- **username**: SSH user (default from config.ini or "debian")
-- **ssh_key_file**: Path to SSH public key (default from config.ini)
-- **networks**: Network configuration
-  - **host_bridge**: Host Network bridge (default: br0)
-  - **guest_ipv4**: Guest Static IP address
-  - **guest_gateway4**: Guest Network gateway (default from config.ini)
-  - **guest_nameservers**: Guest DNS servers array (default from config.ini)
+### Parâmetros de Configuração
 
-## ⚙️ Configuration File (config.ini)
+- **name**: Identificador da VM (obrigatório)
+- **memory**: RAM em MB (padrão: 2048)
+- **vcpus**: Número de CPUs virtuais (padrão: 2)
+- **disk_size**: Tamanho do disco em GB (padrão: 2)
+- **username**: Usuário SSH (padrão do config.ini ou "debian")
+- **ssh_key_file**: Caminho para a chave pública SSH (padrão no config.ini)
+- **networks**: Configuração de rede
+  - **host_bridge**: Bridge de rede do host (padrão: br0)
+  - **guest_ipv4**: IP estático da VM
+  - **guest_gateway4**: Gateway da rede da VM (padrão no config.ini)
+  - **guest_nameservers**: Array de servidores DNS da VM (padrão no config.ini)
+
+
+## ⚙️ Arquivo de Configuração (config.ini)
 
 O kvm-compose agora suporta um arquivo de configuração opcional que define valores padrão. O arquivo é procurado em:
 
 1. `./config.ini` (diretório atual)
-2. `~/.config/kvm-compose/config.ini` (diretório do usuário)
+2. `~/.config/kvm-compose/config.ini` (diretório config do usuário)
 
 ### Exemplo de config.ini:
 
@@ -201,22 +114,26 @@ path_upstream_images = ~/.config/kvm-compose/images/upstream
 path_vm_images = ~/.config/kvm-compose/images/vm
 ```
 
+
 ### Benefícios da Configuração:
 
 - 📂 **Organização**: Imagens separadas por tipo (base vs VMs)
-- 🔧 **Defaults**: Valores padrão configuráveis por projeto/usuário
+- 🔧 **Padrões**: Valores padrão configuráveis por projeto/usuário
 - 🏠 **Diretórios**: Imagens organizadas em ~/.config/kvm-compose/
 - ♻️ **Reutilização**: Imagens base compartilhadas entre projetos
 
-## 🎯 Available Commands
 
-- 🆙 `up` - Create and start all VMs defined in the compose file
-- ▶️ `start` - Start existing VMs
-- ⏹️ `stop` - Stop running VMs (graceful shutdown)
-- ⬇️ `down` - Destroy VMs and remove disk files
-- 📋 `list` - Show VMs configuration and status with colorized output
+## 🎯 Comandos Disponíveis
 
-## 💡 Usage Examples
+- 🆙 `up` - Cria e inicia todas as VMs definidas no arquivo compose
+- ▶️ `start` - Inicia VMs existentes
+- ⏹️ `stop` - Para VMs em execução (desligamento gracioso)
+- ⬇️ `down` - Remove VMs e apaga arquivos de disco
+- 📋 `status` - Mostra configuração e status das VMs com saída colorida
+- 💻 `ssh` - Acede ao shell da VM definida 
+
+
+## 💡 Exemplos de Uso
 
 ```bash
 # Usando o binário instalado
@@ -224,11 +141,12 @@ kvm-compose up
 kvm-compose list  
 kvm-compose stop
 kvm-compose down
+kvm-compose ssh <vmname>
 
 # Usando arquivo compose customizado
-kvm-compose up --compose my-lab.yaml
+kvm-compose up --compose meu-lab.yaml
 
-# Usando make targets para desenvolvimento
+# Usando targets do Make para desenvolvimento
 make run-up      # Compila e executa 'up'
 make run-list    # Compila e executa 'list'  
 make run-down    # Compila e executa 'down'
@@ -240,9 +158,10 @@ make install     # Instala no sistema
 make uninstall   # Remove do sistema
 ```
 
-## 🎨 Visual Improvements
 
-A versão Go inclui saída colorizada e emojis para melhor experiência:
+## 🎨 Melhorias Visuais
+
+A versão em Go inclui saída colorida e emojis para melhor experiência:
 
 - 🟢 VMs executando
 - 🔴 VMs paradas
@@ -252,31 +171,160 @@ A versão Go inclui saída colorizada e emojis para melhor experiência:
 - ❌ Erros e falhas
 - ⚠️ Avisos importantes
 
-## 🏗️ Development
+
+
+### 🐧 1.1 Instalar KVM no Ubuntu/Debian
+
+```bash
+# Instale o KVM e dependências
+sudo apt update
+sudo apt install -y qemu-kvm libvirt-daemon libvirt-clients bridge-utils virt-manager virtinst cloud-image-utils wget
+```
+
+Para uso sem privilégios de root, adicione seu usuário aos grupos libvirt e kvm:
+
+```bash
+sudo usermod -aG libvirt,kvm $USER
+```
+
+Outros tutoriais:
+- https://cloudspinx.com/install-kvm-on-debian-with-virt-manager-and-cockpit/
+- https://sysguides.com/install-kvm-on-linux
+- https://phoenixnap.com/kb/ubuntu-install-kvm
+
+## 1.2 **Resolução Local de Nomes das VMs**
+
+Para resolver os nomes das VMs localmente:
+
+1. Instale o pacote `libnss-libvirt`:
+
+  ```bash
+  sudo apt install libnss-libvirt
+  ```
+
+2. Edite o arquivo `/etc/nsswitch.conf`, adicionando `libvirt libvirt_guest` na linha de `hosts`:
+
+  ```
+  hosts: files libvirt libvirt_guest dns
+  ```
+
+Agora você pode acessar as VMs via SSH usando o nome da máquina.
+
+---
+
+
+
+### 🔧 2. Configurar bridge de rede no Debian
+
+1. **Instale os utilitários necessários**
+
+```bash
+sudo apt update
+sudo apt install bridge-utils
+```
+
+2. **Identifique sua interface de rede física**
+
+```bash
+ip -f inet a s
+```
+
+3. **Configure a bridge**
+
+Crie um arquivo de configuração para a bridge no diretório /etc/network/interfaces.d/. Por exemplo, crie um arquivo chamado br0:
+
+```bash
+sudo nano /etc/network/interfaces.d/br0
+```
+
+Adicione a configuração abaixo, substituindo **eth0** pelo nome real da sua interface e ajustando os parâmetros de IP conforme necessário:
+
+* **Para IP estático:**
+
+
+```
+## Arquivo de configuração IP estático para br0 ##
+auto br0
+iface br0 inet static
+address 192.168.1.100
+netmask 255.255.255.0
+gateway 192.168.1.1
+dns-nameservers 8.8.8.8 8.8.4.4
+bridge_ports eth0
+bridge_stp off
+bridge_fd 0
+```
+
+* **Para IP dinâmico (DHCP):**
+
+```
+## Arquivo de configuração DHCP para br0 ##
+auto br0
+iface br0 inet dhcp
+bridge_ports eth0
+```
+
+4. **Garanta que a interface física não está configurada**
+
+  Verifique se a interface física (ex: eth0) não está configurada no arquivo principal /etc/network/interfaces. Ela deve ser gerenciada apenas pela bridge.
+
+5. **Reinicie o serviço de rede**
+
+```bash
+sudo systemctl restart networking
+```
+
+6. **Verifique a bridge**
+
+  Confirme que a bridge foi criada com sucesso usando o comando brctl ou bridge:
+
+```bash
+brctl show
+# ou
+bridge link
+```
+
+Outros tutoriais:
+- https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/
+
+
+### 🛡️ 3. Criar chave SSH
+
+```bash
+# Gerar uma nova chave SSH ed25519 (recomendado)
+ssh-keygen -t ed25519 -C "seu-email@exemplo.com"
+
+# Por padrão, a chave será salva em ~/.ssh/id_ed25519
+# Pressione Enter para aceitar o local padrão e defina uma senha se desejar
+```
+
+
+## 🏗️ Desenvolvimento
 
 Para contribuir ou modificar o código:
 
-1. **Clone and build:**
+1. **Clone e faça o build:**
 
 ```bash
-git clone https://github.com/yourusername/kvm-compose.git
+git clone https://github.com/seuusuario/kvm-compose.git
 cd kvm-compose
     
-# Instale dependências
+# Instale as dependências
 make deps
 
 # Desenvolvimento
 make build       # Build local
-make test        # Execute testes
-make clean       # Limpe build artifacts
+make test        # Executa testes
+make clean       # Limpa artefatos de build
 
 # Teste local sem instalar
 ./build/kvm-compose --help
 ```
 
-## License
 
-GNU GENERAL PUBLIC LICENSE Version 3
+## Licença
+
+Licença Pública Geral GNU Versão 3
 
 ---
 
