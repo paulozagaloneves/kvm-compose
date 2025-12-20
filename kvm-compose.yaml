@@ -1,28 +1,43 @@
 # k8s control plane
 - name: k8s-cp-01
-  distro: debian-13
+  distro: debian13
   memory: 4096
   vcpus: 4
   disk_size: 20
+  username: paulo
   networks:
-    - bridge: br0
-      ipv4: 192.168.1.40
+    - host_bridge: br0
+      guest_ipv4: 192.168.1.40
 
 # k8s worker 1
 - name: k8s-wrk-01
-  distro: debian-13
+  distro: debian13
   memory: 4096
   vcpus: 4
   disk_size: 20
+  username: paulo
   networks:
-    - bridge: br0
-      ipv4: 192.168.1.41
+    - host_bridge: br0
+      guest_ipv4: 192.168.1.41
+
 # k8s worker 2
 - name: k8s-wrk-02
-  distro: debian-13
+  distro: debian13
   memory: 4096
   vcpus: 4
   disk_size: 20
+  username: paulo
   networks:
-    - bridge: br0
-      ipv4: 192.168.1.42
+    - host_bridge: br0
+      guest_ipv4: 192.168.1.42
+
+# k8s worker 3
+- name: k8s-wrk-03
+  distro: debian13
+  memory: 4096
+  vcpus: 4
+  disk_size: 20
+  username: paulo
+  networks:
+    - host_bridge: br0
+      guest_ipv4: 192.168.1.43

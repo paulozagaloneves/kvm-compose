@@ -144,10 +144,10 @@ Here's a simple example of a `kvm-compose.yaml` file:
   username: debian
   ssh_key_file: ~/.ssh/id_ed25519.pub
   networks:
-    - bridge: br0
-      ipv4: 192.168.1.40
-      gateway: 192.168.1.1
-      nameservers: [1.1.1.1, 8.8.8.8]
+    - host_bridge: br0
+      guest_ipv4: 192.168.1.40
+      guest_gateway4: 192.168.1.1
+      guest_nameservers: [1.1.1.1, 8.8.8.8]
 
 # Kubernetes worker node
 - name: k8s-wrk-01
@@ -158,10 +158,10 @@ Here's a simple example of a `kvm-compose.yaml` file:
   username: debian
   ssh_key_file: ~/.ssh/id_ed25519.pub
   networks:
-    - bridge: br0
-      ipv4: 192.168.1.41
-      gateway: 192.168.1.1
-      nameservers: [1.1.1.1, 8.8.8.8]
+    - host_bridge: br0
+      guest_ipv4: 192.168.1.41
+      guest_gateway4: 192.168.1.1
+      guest_nameservers: [1.1.1.1, 8.8.8.8]
 ```
 
 ### Configuration Parameters
@@ -173,10 +173,10 @@ Here's a simple example of a `kvm-compose.yaml` file:
 - **username**: SSH user (default from config.ini or "debian")
 - **ssh_key_file**: Path to SSH public key (default from config.ini)
 - **networks**: Network configuration
-  - **bridge**: Network bridge (default: br0)
-  - **ipv4**: Static IP address
-  - **gateway**: Network gateway (default from config.ini)
-  - **nameservers**: DNS servers array (default from config.ini)
+  - **host_bridge**: Host Network bridge (default: br0)
+  - **guest_ipv4**: Guest Static IP address
+  - **guest_gateway4**: Guest Network gateway (default from config.ini)
+  - **guest_nameservers**: Guest DNS servers array (default from config.ini)
 
 ## ⚙️ Configuration File (config.ini)
 
