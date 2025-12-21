@@ -8,6 +8,10 @@ Versão 0.2.0 Codinome: "Gambiarra" - Dezembro de 2025
 
 🖥️ **kvm-compose** é uma ferramenta moderna escrita em **Go** que simplifica o gerenciamento de máquinas virtuais KVM usando fluxos de trabalho similares ao Docker Compose.
 
+Este projeto foi baseado em dois outros projetos, aos quais agradeço e reconheço todos os direitos aos seus autores originais:
+* [virt-install-cloud](https://github.com/bkram/virt-install-cloud-init)
+* [virt-lightning](https://github.com/virt-lightning/virt-lightning)
+
 
 ## Funcionalidades
 
@@ -51,7 +55,7 @@ Versão 0.2.0 Codinome: "Gambiarra" - Dezembro de 2025
 
 ## Instalação
 
-1. ** Instalação automática**
+1. **Instalação automática**
 ```bash
 curl -sSL https://raw.githubusercontent.com/paulozagaloneves/kvm-compose/refs/heads/main/INSTALL.sh | bash
 ```
