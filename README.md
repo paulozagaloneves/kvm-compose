@@ -71,7 +71,7 @@ sudo mv ./kvm-compose /usr/local/bin/kvm-compose
   - Crie ou modifique o arquivo `kvm-compose.yaml` para definir suas VMs.
 
 
-** 🔧 Exemplo de Configuração**
+🔧 **Exemplo de Configuração**
 
 Aqui está um exemplo simples de arquivo `kvm-compose.yaml`:
 
