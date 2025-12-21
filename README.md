@@ -1,7 +1,3 @@
-# 📑 Tabela de Conteúdos
-
-
-
 # KVM Compose
 
 Versão 0.2.0 Codinome: "Gambiarra" - Dezembro de 2025
@@ -23,7 +19,6 @@ Este projeto foi baseado em dois outros projetos, aos quais agradeço e reconhe�
 
 
 
-- [📑 Tabela de Conteúdos](#-tabela-de-conteúdos)
 - [KVM Compose](#kvm-compose)
   - [Funcionalidades](#funcionalidades)
   - [📋 Pré-requisitos](#-pré-requisitos)
