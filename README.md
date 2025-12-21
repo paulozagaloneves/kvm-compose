@@ -17,28 +17,27 @@ Versão 0.2.0 Codinome: "Gambiarra" - Dezembro de 2025
 
 ---
 
+
+
 - [📑 Tabela de Conteúdos](#-tabela-de-conteúdos)
 - [KVM Compose](#kvm-compose)
   - [Funcionalidades](#funcionalidades)
-  - [📋 1. Pré-requisitos](#-1-pré-requisitos)
+  - [📋 Pré-requisitos](#-pré-requisitos)
 - [🚀 Início Rápido](#-início-rápido)
-  - [🔧 Exemplo de Configuração](#-exemplo-de-configuração)
-    - [Parâmetros de Configuração](#parâmetros-de-configuração)
-  - [⚙️ Arquivo de Configuração (config.ini)](#️-arquivo-de-configuração-configini)
-    - [Exemplo de config.ini:](#exemplo-de-configini)
-    - [Benefícios da Configuração:](#benefícios-da-configuração)
-  - [🎯 Comandos Disponíveis](#-comandos-disponíveis)
-  - [💡 Exemplos de Uso](#-exemplos-de-uso)
-  - [🐧 1.1 Instalar KVM no Ubuntu/Debian](#-11-instalar-kvm-no-ubuntudebian)
-  - [1.2 **Resolução Local de Nomes das VMs**](#12-resolução-local-de-nomes-das-vms)
-    - [🔧 2. Configurar bridge de rede no Debian](#-2-configurar-bridge-de-rede-no-debian)
-    - [🛡️ 3. Criar chave SSH](#️-3-criar-chave-ssh)
-  - [🏗️ Desenvolvimento](#️-desenvolvimento)
-  - [Licença](#licença)
+  - [Instalação](#instalação)
+  - [Configuração](#configuração)
+    - [⚙️ Arquivo de Configuração Geral (config.ini)](#️-arquivo-de-configuração-geral-configini)
+    - [🎯 Comandos Disponíveis](#-comandos-disponíveis)
+- [🐧 Instalar KVM no Ubuntu/Debian](#-instalar-kvm-no-ubuntudebian)
+  - [Resolução Local de Nomes das VMs](#resolução-local-de-nomes-das-vms)
+- [🔧 Configurar bridge de rede no Debian](#-configurar-bridge-de-rede-no-debian)
+- [🛡️ Criar chave SSH](#️-criar-chave-ssh)
+- [🏗️ Desenvolvimento](#️-desenvolvimento)
+- [Licença](#licença)
 
 ---
 
-## 📋 1. Pré-requisitos
+## 📋 Pré-requisitos
 
 - Linux com suporte ao KVM habilitado
 - `qemu-kvm`, `libvirt-clients` e `virtinst` instalados
@@ -50,15 +49,15 @@ Versão 0.2.0 Codinome: "Gambiarra" - Dezembro de 2025
 
 # 🚀 Início Rápido
 
-1. **Instalação**
+## Instalação
 
-1.1 ** Instalação automática**
+1. ** Instalação automática**
 ```bash
 curl -sSL https://raw.githubusercontent.com/paulozagaloneves/kvm-compose/refs/heads/main/INSTALL.sh | bash
 ```
 
 
-1.2 **Instalação Manual**
+2. **Instalação Manual**
 
 ```bash
 # Linux
@@ -68,12 +67,12 @@ chmod +x kvm-compose
 sudo mv ./kvm-compose /usr/local/bin/kvm-compose
 ```
 
-2. **Edite a configuração:**
+## Configuração
 
   - Crie ou modifique o arquivo `kvm-compose.yaml` para definir suas VMs.
 
 
-## 🔧 Exemplo de Configuração
+** 🔧 Exemplo de Configuração**
 
 Aqui está um exemplo simples de arquivo `kvm-compose.yaml`:
 
@@ -108,7 +107,7 @@ Aqui está um exemplo simples de arquivo `kvm-compose.yaml`:
 ```
 
 
-### Parâmetros de Configuração
+**Parâmetros de Configuração**
 
 - **name**: Identificador da VM (obrigatório)
 - **memory**: RAM em MB (padrão: 2048)
@@ -123,14 +122,14 @@ Aqui está um exemplo simples de arquivo `kvm-compose.yaml`:
   - **guest_nameservers**: Array de servidores DNS da VM (padrão no config.ini)
 
 
-## ⚙️ Arquivo de Configuração (config.ini)
+### ⚙️ Arquivo de Configuração Geral (config.ini)
 
 O kvm-compose agora suporta um arquivo de configuração opcional que define valores padrão. O arquivo é procurado em:
 
 1. `./config.ini` (diretório atual)
 2. `~/.config/kvm-compose/config.ini` (diretório config do usuário)
 
-### Exemplo de config.ini:
+**Exemplo de config.ini:**
 
 ```ini
 [main]
@@ -147,15 +146,7 @@ path_vm_images = ~/.config/kvm-compose/images/vm
 ```
 
 
-### Benefícios da Configuração:
-
-- 📂 **Organização**: Imagens separadas por tipo (base vs VMs)
-- 🔧 **Padrões**: Valores padrão configuráveis por projeto/usuário
-- 🏠 **Diretórios**: Imagens organizadas em ~/.config/kvm-compose/
-- ♻️ **Reutilização**: Imagens base compartilhadas entre projetos
-
-
-## 🎯 Comandos Disponíveis
+### 🎯 Comandos Disponíveis
 
 - 🆙 `up` - Cria e inicia todas as VMs definidas no arquivo compose
 - ▶️ `start` - Inicia VMs existentes
@@ -165,7 +156,7 @@ path_vm_images = ~/.config/kvm-compose/images/vm
 - 💻 `ssh` - Acede ao shell da VM definida 
 
 
-## 💡 Exemplos de Uso
+**💡 Exemplos de Uso**
 
 ```bash
 # Usando o binário instalado
@@ -193,7 +184,7 @@ make uninstall   # Remove do sistema
 
 
 
-## 🐧 1.1 Instalar KVM no Ubuntu/Debian
+# 🐧 Instalar KVM no Ubuntu/Debian
 
 ```bash
 # Instale o KVM e dependências
@@ -212,7 +203,7 @@ Outros tutoriais:
 - https://sysguides.com/install-kvm-on-linux
 - https://phoenixnap.com/kb/ubuntu-install-kvm
 
-## 1.2 **Resolução Local de Nomes das VMs**
+## Resolução Local de Nomes das VMs
 
 Para resolver os nomes das VMs localmente:
 
@@ -234,7 +225,7 @@ Agora você pode acessar as VMs via SSH usando o nome da máquina.
 
 
 
-### 🔧 2. Configurar bridge de rede no Debian
+# 🔧 Configurar bridge de rede no Debian
 
 1. **Instale os utilitários necessários**
 
@@ -308,7 +299,7 @@ Outros tutoriais:
 - https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/
 
 
-### 🛡️ 3. Criar chave SSH
+# 🛡️ Criar chave SSH
 
 ```bash
 # Gerar uma nova chave SSH ed25519 (recomendado)
@@ -319,7 +310,7 @@ ssh-keygen -t ed25519 -C "seu-email@exemplo.com"
 ```
 
 
-## 🏗️ Desenvolvimento
+# 🏗️ Desenvolvimento
 
 Para contribuir ou modificar o código:
 
@@ -342,7 +333,7 @@ make clean       # Limpa artefatos de build
 ```
 
 
-## Licença
+# Licença
 
 Licença Pública Geral GNU Versão 3
 
