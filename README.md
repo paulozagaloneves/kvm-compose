@@ -39,11 +39,11 @@ Este projeto foi baseado em dois outros projetos, aos quais agradeço e reconhe�
 ## 📋 Pré-requisitos
 
 - Linux com suporte ao KVM habilitado
-- `qemu-kvm`, `libvirt-clients` e `virtinst` instalados
-- Bridge de rede configurada (padrão: `br0`)
+- `qemu-kvm`, `libvirt-clients` e `virtinst` instalados (ver mais detalhes em [🐧 Instalar KVM no Ubuntu/Debian](#-instalar-kvm-no-ubuntudebian))
+- Bridge de rede configurada (padrão: `br0`, ver mais detalhes em: [🔧 Configurar bridge de rede no Debian](#-configurar-bridge-de-rede-no-debian))
 - `Go 1.21+` (para compilação)
 - `wget` para baixar imagens base
-- Par de chaves SSH configurado
+- Par de chaves SSH configurado (ver mais detalhes em: [🛡️ Criar chave SSH](#️-criar-chave-ssh))
 
 
 # 🚀 Início Rápido
