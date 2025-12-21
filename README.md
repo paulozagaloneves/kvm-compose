@@ -1,3 +1,6 @@
+# 📑 Tabela de Conteúdos
+
+
 
 # KVM Compose
 
@@ -14,6 +17,27 @@ Versão 0.2.0 Codinome: "Gambiarra" - Dezembro de 2025
 
 ---
 
+- [📑 Tabela de Conteúdos](#-tabela-de-conteúdos)
+- [KVM Compose](#kvm-compose)
+  - [Funcionalidades](#funcionalidades)
+  - [📋 1. Pré-requisitos](#-1-pré-requisitos)
+- [🚀 Início Rápido](#-início-rápido)
+  - [🔧 Exemplo de Configuração](#-exemplo-de-configuração)
+    - [Parâmetros de Configuração](#parâmetros-de-configuração)
+  - [⚙️ Arquivo de Configuração (config.ini)](#️-arquivo-de-configuração-configini)
+    - [Exemplo de config.ini:](#exemplo-de-configini)
+    - [Benefícios da Configuração:](#benefícios-da-configuração)
+  - [🎯 Comandos Disponíveis](#-comandos-disponíveis)
+  - [💡 Exemplos de Uso](#-exemplos-de-uso)
+  - [🐧 1.1 Instalar KVM no Ubuntu/Debian](#-11-instalar-kvm-no-ubuntudebian)
+  - [1.2 **Resolução Local de Nomes das VMs**](#12-resolução-local-de-nomes-das-vms)
+    - [🔧 2. Configurar bridge de rede no Debian](#-2-configurar-bridge-de-rede-no-debian)
+    - [🛡️ 3. Criar chave SSH](#️-3-criar-chave-ssh)
+  - [🏗️ Desenvolvimento](#️-desenvolvimento)
+  - [Licença](#licença)
+
+---
+
 ## 📋 1. Pré-requisitos
 
 - Linux com suporte ao KVM habilitado
@@ -27,6 +51,14 @@ Versão 0.2.0 Codinome: "Gambiarra" - Dezembro de 2025
 # 🚀 Início Rápido
 
 1. **Instalação**
+
+1.1 ** Instalação automática**
+```bash
+curl -sSL https://raw.githubusercontent.com/paulozagaloneves/kvm-compose/refs/heads/main/INSTALL.sh | bash
+```
+
+
+1.2 **Instalação Manual**
 
 ```bash
 # Linux
@@ -138,7 +170,7 @@ path_vm_images = ~/.config/kvm-compose/images/vm
 ```bash
 # Usando o binário instalado
 kvm-compose up
-kvm-compose list  
+kvm-compose status  
 kvm-compose stop
 kvm-compose down
 kvm-compose ssh <vmname>
@@ -148,7 +180,7 @@ kvm-compose up --compose meu-lab.yaml
 
 # Usando targets do Make para desenvolvimento
 make run-up      # Compila e executa 'up'
-make run-list    # Compila e executa 'list'  
+make run-status  # Compila e executa 'status'  
 make run-down    # Compila e executa 'down'
 
 # Build e desenvolvimento
@@ -159,21 +191,9 @@ make uninstall   # Remove do sistema
 ```
 
 
-## 🎨 Melhorias Visuais
-
-A versão em Go inclui saída colorida e emojis para melhor experiência:
-
-- 🟢 VMs executando
-- 🔴 VMs paradas
-- 🟡 VMs pausadas
-- ⚪ VMs não criadas
-- ✅ Operações bem-sucedidas
-- ❌ Erros e falhas
-- ⚠️ Avisos importantes
 
 
-
-### 🐧 1.1 Instalar KVM no Ubuntu/Debian
+## 🐧 1.1 Instalar KVM no Ubuntu/Debian
 
 ```bash
 # Instale o KVM e dependências
