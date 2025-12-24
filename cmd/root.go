@@ -34,6 +34,12 @@ func init() {
 
 	// Adicionar subcomandos
 	rootCmd.AddCommand(downCmd)
+	/*rootCmd.AddCommand(upCmd)
+	rootCmd.AddCommand(startCmd)
+	rootCmd.AddCommand(stopCmd)
+	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(statusCmd)*/
+	rootCmd.AddCommand(versionCmd)
 }
 
 // Execute executa o comando raiz
