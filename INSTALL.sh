@@ -23,12 +23,32 @@ echo "✅ Todas as dependências estão instaladas."
 
 
 # 1. Download binary
-echo "⬇️  Baixando binário do kvm-compose..."
-BIN_URL="https://github.com/paulozagaloneves/kvm-compose/releases/latest/download/kvm-compose-linux-amd64"
+echo "⬇️  Detectando arquitetura do processador..."
+ARCH=$(uname -m)
+case "$ARCH" in
+  x86_64)
+    ARCH_DL="amd64" ;;
+  aarch64|arm64)
+    ARCH_DL="arm64" ;;
+  *)
+    echo "❌ Arquitetura $ARCH não suportada." ; exit 1 ;;
+esac
+
+echo "⬇️  Baixando binário do kvm-compose para $ARCH_DL..."
+if [[ -z "$VERSION" || "$VERSION" == "latest" ]]; then
+  echo "🔎 Descobrindo a última versão do kvm-compose no GitHub..."
+  VERSION=$(curl -s https://api.github.com/repos/paulozagaloneves/kvm-compose/releases/latest | grep 'tag_name' | cut -d '"' -f4)
+  if [[ -z "$VERSION" ]]; then
+    echo "❌ Não foi possível obter a última versão."
+    exit 1
+  fi
+  echo "ℹ️  Última versão encontrada: $VERSION"
+fi
+BIN_URL="https://github.com/paulozagaloneves/kvm-compose/releases/download/${VERSION}/kvm-compose_${VERSION}_linux_${ARCH_DL}.tar.gz"
 BIN_DEST="/usr/local/bin/kvm-compose"
-  curl -sS -L "$BIN_URL" -o /tmp/kvm-compose
-echo "🚚 Movendo binário para /usr/local/bin/kvm-compose..."
-sudo mv /tmp/kvm-compose "$BIN_DEST"
+curl -sS -L "$BIN_URL" -o /tmp/kvm-compose.tar.gz
+echo "🚚 Extraindo binário para /usr/local/bin/kvm-compose..."
+sudo tar -xzf /tmp/kvm-compose.tar.gz -C /usr/local/bin
 echo "🔒 Atribuindo permissões de execução..."
 sudo chmod +x "$BIN_DEST"
 echo "✅ kvm-compose instalado em $BIN_DEST"
@@ -83,7 +103,7 @@ echo
 echo "Exemplo básico de kvm-compose.yaml:"
 cat <<EOF
 - name: minha-vm
-  distro: debian-13
+  distro: debian13
   memory: 2048
   vcpus: 2
   disk_size: 10

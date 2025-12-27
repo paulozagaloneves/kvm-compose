@@ -23,7 +23,8 @@ var (
 func showBanner() {
 	color.Cyan("============================================================")
 	color.New(color.FgGreen, color.Bold).Println("🖥️  kvm-compose - Gerenciador de VMs KVM via arquivo compose")
-	color.New(color.FgYellow, color.Bold).Println("📦 Versão: 0.2.0 Codename: \"Gambiarra\" - Dezembro de 2025")
+	Version := "0.3.4"
+	color.New(color.FgYellow, color.Bold).Printf("📦 Versão: %s Codename: \"Gambiarra\" - Dezembro de 2025" , Version)
 	color.Cyan("============================================================")
 	fmt.Println()
 }

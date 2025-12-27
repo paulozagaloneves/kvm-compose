@@ -1,3 +1,32 @@
+<p align="center">
+  
+  <h3 align="center">KVM Compose</h3>
+  <p align="center"><a href="https://github.com/paulozagaloneves/kvm-compose">Compose</a> for KVM</p>
+  <p align="center">
+    <a href="https://github.com/paulozagaloneves/kvm-compose/releases/latest"><img alt="GitHub release" src="https://img.shields.io/github/release/paulozagaloneves/kvm-compose.svg?logo=github&style=flat-square"></a>
+  </p>
+</p>
+
+___
+
+
+- [KVM Compose](#kvm-compose)
+  - [Funcionalidades](#funcionalidades)
+  - [📋 Pré-requisitos](#-pré-requisitos)
+- [🚀 Início Rápido](#-início-rápido)
+  - [Instalação](#instalação)
+  - [Configuração](#configuração)
+    - [⚙️ Arquivo de Configuração Geral (config.ini)](#️-arquivo-de-configuração-geral-configini)
+    - [🎯 Comandos Disponíveis](#-comandos-disponíveis)
+- [🐧 Instalar KVM no Ubuntu/Debian](#-instalar-kvm-no-ubuntudebian)
+  - [Resolução Local de Nomes das VMs](#resolução-local-de-nomes-das-vms)
+- [🔧 Configurar bridge de rede no Debian](#-configurar-bridge-de-rede-no-debian)
+- [🛡️ Criar chave SSH](#️-criar-chave-ssh)
+- [🏗️ Desenvolvimento](#️-desenvolvimento)
+- [Licença](#licença)
+
+---
+
 # KVM Compose
 
 Versão 0.2.0 Codinome: "Gambiarra" - Dezembro de 2025
@@ -16,22 +45,6 @@ Este projeto foi baseado em dois outros projetos, aos quais agradeço e reconhe�
 
 ---
 
-- [KVM Compose](#kvm-compose)
-  - [Funcionalidades](#funcionalidades)
-  - [📋 Pré-requisitos](#-pré-requisitos)
-- [🚀 Início Rápido](#-início-rápido)
-  - [Instalação](#instalação)
-  - [Configuração](#configuração)
-    - [⚙️ Arquivo de Configuração Geral (config.ini)](#️-arquivo-de-configuração-geral-configini)
-    - [🎯 Comandos Disponíveis](#-comandos-disponíveis)
-- [🐧 Instalar KVM no Ubuntu/Debian](#-instalar-kvm-no-ubuntudebian)
-  - [Resolução Local de Nomes das VMs](#resolução-local-de-nomes-das-vms)
-- [🔧 Configurar bridge de rede no Debian](#-configurar-bridge-de-rede-no-debian)
-- [🛡️ Criar chave SSH](#️-criar-chave-ssh)
-- [🏗️ Desenvolvimento](#️-desenvolvimento)
-- [Licença](#licença)
-
----
 
 ## 📋 Pré-requisitos
 

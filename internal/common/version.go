@@ -23,7 +23,7 @@ func getDefaultIfEmpty(value, defaultValue string) string {
 }
 
 func GetVersion() string {
-	version := getDefaultIfEmpty(Version, "0.3.2")
+	version := getDefaultIfEmpty(Version, "0.3.4")
 	buildUser := getDefaultIfEmpty(BuildUser, "unknown")
 	buildDate := getDefaultIfEmpty(BuildDate, "unknown")
 	commitID := getDefaultIfEmpty(CommitID, "unknown")
