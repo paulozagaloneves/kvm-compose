@@ -8,7 +8,6 @@ Este projeto foi baseado em dois outros projetos, aos quais agradeço e reconhe�
 * [virt-install-cloud](https://github.com/bkram/virt-install-cloud-init)
 * [virt-lightning](https://github.com/virt-lightning/virt-lightning)
 
-
 ## Funcionalidades
 
 - Crie, inicie, pare e gerencie VMs KVM facilmente.
@@ -16,8 +15,6 @@ Este projeto foi baseado em dois outros projetos, aos quais agradeço e reconhe�
 - Fluxo de trabalho simplificado para desenvolvimento e testes.
 
 ---
-
-
 
 - [KVM Compose](#kvm-compose)
   - [Funcionalidades](#funcionalidades)
@@ -45,16 +42,15 @@ Este projeto foi baseado em dois outros projetos, aos quais agradeço e reconhe�
 - `wget` para baixar imagens base
 - Par de chaves SSH configurado ([🛡️ Criar chave SSH](#️-criar-chave-ssh))
 
-
 # 🚀 Início Rápido
 
 ## Instalação
 
 1. **Instalação automática**
+
 ```bash
 curl -sSL https://raw.githubusercontent.com/paulozagaloneves/kvm-compose/refs/heads/main/INSTALL.sh | bash
 ```
-
 
 2. **Instalação Manual**
 
@@ -70,7 +66,6 @@ sudo mv ./kvm-compose /usr/local/bin/kvm-compose
 
   - Crie ou modifique o arquivo `kvm-compose.yaml` para definir suas VMs.
 
-
 🔧 **Exemplo de Configuração**
 
 Aqui está um exemplo simples de arquivo `kvm-compose.yaml`:
@@ -78,7 +73,7 @@ Aqui está um exemplo simples de arquivo `kvm-compose.yaml`:
 ```yaml
 # Control plane do Kubernetes
 - name: k8s-cp-01
-  distro: debian-13
+  distro: debian13
   memory: 4096
   vcpus: 4
   disk_size: 20
@@ -92,7 +87,7 @@ Aqui está um exemplo simples de arquivo `kvm-compose.yaml`:
 
 # Nó worker do Kubernetes
 - name: k8s-wrk-01
-  distro: debian-13
+  distro: debian13
   memory: 2048
   vcpus: 2
   disk_size: 15
@@ -105,10 +100,10 @@ Aqui está um exemplo simples de arquivo `kvm-compose.yaml`:
       guest_nameservers: [1.1.1.1, 8.8.8.8]
 ```
 
-
 **Parâmetros de Configuração**
 
 - **name**: Identificador da VM (obrigatório)
+- **distro**: distribuição [debian13,ubuntu24.04,almalinux10,fedora43] (obrigatório)
 - **memory**: RAM em MB (padrão: 2048)
 - **vcpus**: Número de CPUs virtuais (padrão: 2)
 - **disk_size**: Tamanho do disco em GB (padrão: 2)
@@ -119,7 +114,6 @@ Aqui está um exemplo simples de arquivo `kvm-compose.yaml`:
   - **guest_ipv4**: IP estático da VM
   - **guest_gateway4**: Gateway da rede da VM (padrão no config.ini)
   - **guest_nameservers**: Array de servidores DNS da VM (padrão no config.ini)
-
 
 ### ⚙️ Arquivo de Configuração Geral (config.ini)
 
@@ -144,7 +138,6 @@ path_upstream_images = ~/.config/kvm-compose/images/upstream
 path_vm_images = ~/.config/kvm-compose/images/vm
 ```
 
-
 ### 🎯 Comandos Disponíveis
 
 - 🆙 `up` - Cria e inicia todas as VMs definidas no arquivo compose
@@ -152,8 +145,7 @@ path_vm_images = ~/.config/kvm-compose/images/vm
 - ⏹️ `stop` - Para VMs em execução (desligamento gracioso)
 - ⬇️ `down` - Remove VMs e apaga arquivos de disco
 - 📋 `status` - Mostra configuração e status das VMs com saída colorida
-- 💻 `ssh` - Acede ao shell da VM definida 
-
+- 💻 `ssh` - Acede ao shell da VM definida
 
 **💡 Exemplos de Uso**
 
@@ -180,9 +172,6 @@ make install     # Instala no sistema
 make uninstall   # Remove do sistema
 ```
 
-
-
-
 # 🐧 Instalar KVM no Ubuntu/Debian
 
 ```bash
@@ -208,21 +197,18 @@ Para resolver os nomes das VMs localmente:
 
 1. Instale o pacote `libnss-libvirt`:
 
-  ```bash
-  sudo apt install libnss-libvirt
-  ```
-
+   ``bash
+   udo apt install libnss-libvirt
+   ``
 2. Edite o arquivo `/etc/nsswitch.conf`, adicionando `libvirt libvirt_guest` na linha de `hosts`:
 
-  ```
-  hosts: files libvirt libvirt_guest dns
-  ```
+   ``
+   osts: files libvirt libvirt_guest dns
+   ``
 
 Agora você pode acessar as VMs via SSH usando o nome da máquina.
 
 ---
-
-
 
 # 🔧 Configurar bridge de rede no Debian
 
@@ -251,7 +237,6 @@ Adicione a configuração abaixo, substituindo **eth0** pelo nome real da sua in
 
 * **Para IP estático:**
 
-
 ```
 ## Arquivo de configuração IP estático para br0 ##
 auto br0
@@ -276,8 +261,7 @@ bridge_ports eth0
 
 4. **Garanta que a interface física não está configurada**
 
-  Verifique se a interface física (ex: eth0) não está configurada no arquivo principal /etc/network/interfaces. Ela deve ser gerenciada apenas pela bridge.
-
+   erifique se a interface física (ex: eth0) não está configurada no arquivo principal /etc/network/interfaces. Ela deve ser gerenciada apenas pela bridge.
 5. **Reinicie o serviço de rede**
 
 ```bash
@@ -286,7 +270,7 @@ sudo systemctl restart networking
 
 6. **Verifique a bridge**
 
-  Confirme que a bridge foi criada com sucesso usando o comando brctl ou bridge:
+   onfirme que a bridge foi criada com sucesso usando o comando brctl ou bridge:
 
 ```bash
 brctl show
@@ -297,7 +281,6 @@ bridge link
 Outros tutoriais:
 - https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/
 
-
 # 🛡️ Criar chave SSH
 
 ```bash
@@ -307,7 +290,6 @@ ssh-keygen -t ed25519 -C "seu-email@exemplo.com"
 # Por padrão, a chave será salva em ~/.ssh/id_ed25519
 # Pressione Enter para aceitar o local padrão e defina uma senha se desejar
 ```
-
 
 # 🏗️ Desenvolvimento
 
@@ -330,7 +312,6 @@ make clean       # Limpa artefatos de build
 # Teste local sem instalar
 ./build/kvm-compose --help
 ```
-
 
 # Licença
 
