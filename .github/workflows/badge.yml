@@ -1,0 +1,31 @@
+name: Build Status
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  badge:
+    name: Update Build Status Badge
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Generate Badge
+        uses: RubbaBoy/BYOB@24f464284c1fd32028524b59607d417a2e36fee7 # v1.3.0
+        with:
+          NAME: build
+          LABEL: build
+          STATUS: ${{ job.status }}
+          COLOR: green
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

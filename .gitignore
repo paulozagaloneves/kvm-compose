@@ -13,4 +13,5 @@ thumbs.db
 
 # Ignore compiled binaries
 build/
+dist/
 # Ignore generated files
