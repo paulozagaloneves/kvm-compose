@@ -1,4 +1,4 @@
-module kvm-compose
+module github.com/paulozagaloneves/kvm-compose
 
 go 1.24.9
 

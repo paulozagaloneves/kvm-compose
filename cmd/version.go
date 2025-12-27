@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"kvm-compose/internal/common"
+	"github.com/paulozagaloneves/kvm-compose/internal/common"
 
 	"github.com/spf13/cobra"
 )

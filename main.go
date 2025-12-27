@@ -1,8 +1,9 @@
 package main
 
 import (
-	"kvm-compose/cmd"
 	"os"
+
+	"github.com/paulozagaloneves/kvm-compose/cmd"
 
 	"github.com/fatih/color"
 )
