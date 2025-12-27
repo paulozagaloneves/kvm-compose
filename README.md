@@ -56,7 +56,7 @@ curl -sSL https://raw.githubusercontent.com/paulozagaloneves/kvm-compose/refs/he
 
 ```bash
 # Linux
-curl -L https://github.com/paulozagaloneves/kvm-compose/releases/download/0.1.0/kvm-compose-linux-amd64 -o kvm-compose
+curl -L https://github.com/paulozagaloneves/kvm-compose/releases/download/0.3.1/kvm-compose-linux-amd64 -o kvm-compose
 
 chmod +x kvm-compose
 sudo mv ./kvm-compose /usr/local/bin/kvm-compose
