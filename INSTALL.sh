@@ -24,7 +24,7 @@ echo "✅ Todas as dependências estão instaladas."
 
 # 1. Download binary
 echo "⬇️  Baixando binário do kvm-compose..."
-BIN_URL="https://github.com/paulozagaloneves/kvm-compose/releases/download/latest/kvm-compose-linux-amd64"
+BIN_URL="https://github.com/paulozagaloneves/kvm-compose/releases/latest/download/kvm-compose-linux-amd64"
 BIN_DEST="/usr/local/bin/kvm-compose"
   curl -sS -L "$BIN_URL" -o /tmp/kvm-compose
 echo "🚚 Movendo binário para /usr/local/bin/kvm-compose..."

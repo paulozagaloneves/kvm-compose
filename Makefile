@@ -3,8 +3,23 @@
 # Variáveis
 BINARY_NAME=kvm-compose
 VERSION=1.0.0
-BUILD_DIR=build
+BUILD_DIR=dist
+CDR=.
 INSTALL_DIR=/usr/local/bin
+
+# Flags de build
+LDFLAGS := -X github.com/paulozagaloneves/kvm-compose/internal/common.Version=$(VERSION)
+LDFLAGS += -X github.com/paulozagaloneves/kvm-compose/internal/common.BuildDate=$(DATE)
+LDFLAGS += -X github.com/paulozagaloneves/kvm-compose/internal/common.BuildUser=$(BUILT_BY)
+LDFLAGS += -X github.com/paulozagaloneves/kvm-compose/internal/common.CommitID=$(COMMITID)
+LDFLAGS += -X github.com/paulozagaloneves/kvm-compose/internal/common.GoVersion=$(GO_VERSION)
+LDFLAGS += -X github.com/paulozagaloneves/kvm-compose/internal/common.GoOS=$(GO_OS)
+LDFLAGS += -X github.com/paulozagaloneves/kvm-compose/internal/common.GoArch=$(GO_ARCH)
+
+# PLATAFORMAS SUPORTADAS
+PLATAFORMAS = \
+	linux/amd64 \
+	linux/arm64 \
 
 # Comandos Go
 GOCMD=go
@@ -14,8 +29,6 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GOMOD=$(GOCMD) mod
 
-# Flags de build
-LDFLAGS=-ldflags "-X main.version=$(VERSION)"
 
 .PHONY: all build clean test deps install uninstall help
 
@@ -60,6 +73,18 @@ uninstall:
 	@echo "🗑️  Removendo $(BINARY_NAME)..."
 	sudo rm -f $(INSTALL_DIR)/$(BINARY_NAME)
 	@echo "✅ $(BINARY_NAME) removido"
+
+# Cria os binários para múltiplas plataformas (release)
+release: deps
+	@echo "Construindo para múltiplas plataformas..."
+	@mkdir -p $(BUILD_DIR)
+	@for platform in $(PLATAFORMAS); do \
+		OS=$$(echo $$platform | cut -d/ -f1); \
+		ARCH=$$(echo $$platform | cut -d/ -f2); \
+		OUT=$(BUILD_DIR)/$(BINARY_NAME)-$$OS-$$ARCH; \
+		echo "-> $$OS/$$ARCH (Saída: $$OUT)"; \
+		GOOS=$$OS GOARCH=$$ARCH go build -ldflags "$(LDFLAGS)" -v -o $$OUT $(CDR)/main.go || exit 1; \
+	done	
 
 ## run-up: Executa 'up' diretamente
 run-up: build
