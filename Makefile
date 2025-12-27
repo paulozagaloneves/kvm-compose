@@ -7,6 +7,15 @@ BUILD_DIR=dist
 CDR=.
 INSTALL_DIR=/usr/local/bin
 
+# Variáveis para versionamento
+VERSION    := 0.3.5
+DATE       := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+BUILT_BY   := $(shell whoami)
+COMMITID   := $(shell git rev-parse --short HEAD)
+GO_VERSION := $(shell go version | cut -d' ' -f3)
+GO_OS 	   := $(shell go env GOOS)
+GO_ARCH    := $(shell go env GOARCH)
+
 # Flags de build
 LDFLAGS := -X github.com/paulozagaloneves/kvm-compose/internal/common.Version=$(VERSION)
 LDFLAGS += -X github.com/paulozagaloneves/kvm-compose/internal/common.BuildDate=$(DATE)

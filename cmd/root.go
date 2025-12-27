@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
+	"github.com/paulozagaloneves/kvm-compose/internal/common"
 	"github.com/spf13/cobra"
 )
 
@@ -23,8 +24,7 @@ var (
 func showBanner() {
 	color.Cyan("============================================================")
 	color.New(color.FgGreen, color.Bold).Println("🖥️  kvm-compose - Gerenciador de VMs KVM via arquivo compose")
-	Version := "0.3.4"
-	color.New(color.FgYellow, color.Bold).Printf("📦 Versão: %s Codename: \"Gambiarra\" - Dezembro de 2025", Version)
+	color.New(color.FgYellow, color.Bold).Printf("📦 Versão: %s Codename: \"Gambiarra\" - Dezembro de 2025\n", common.GetVersion())
 	color.Cyan("============================================================")
 	fmt.Println()
 }
