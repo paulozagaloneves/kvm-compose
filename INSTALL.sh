@@ -68,15 +68,19 @@ CONFIG_URL="https://raw.githubusercontent.com/paulozagaloneves/kvm-compose/main/
   curl -sS -L "$CONFIG_URL" -o "$CONFIG_DIR/config.ini.example"
 echo "✅ config.ini.example salvo em $CONFIG_DIR/config.ini.example"
 
-# 4. Baixar config.ini default
-echo "⬇️  Baixando config.ini..."
-CONFIG_URL="https://raw.githubusercontent.com/paulozagaloneves/kvm-compose/main/config.ini"
-  curl -sS -L "$CONFIG_URL" -o "$CONFIG_DIR/config.ini"
-echo "✅ config.ini salvo em $CONFIG_DIR/config.ini"
+# 4. Baixar config.ini default se não existir
+if [ ! -f "$CONFIG_DIR/config.ini" ]; then
+    echo "⬇️  Baixando config.ini..."
+    CONFIG_URL="https://raw.githubusercontent.com/paulozagaloneves/kvm-compose/main/config.ini"
+    curl -sS -L "$CONFIG_URL" -o "$CONFIG_DIR/config.ini"
+    echo "✅ config.ini salvo em $CONFIG_DIR/config.ini"
+else
+    echo "ℹ️  config.ini já existe em $CONFIG_DIR/config.ini - pulando download"
+fi
 
 
-# 5. Baixar arquivos de template
-echo "⬇️  Baixando arquivos de template..."
+# 5. Baixar arquivos de template (apenas os que não existirem)
+echo "🔄 Verificando arquivos de template..."
 TEMPLATES=(
   "almalinux10.ini"
   "debian13.ini"
@@ -88,11 +92,29 @@ TEMPLATES=(
   "user-data.tmpl"
 )
 TEMPLATE_BASE="https://raw.githubusercontent.com/paulozagaloneves/kvm-compose/main/templates"
+
+downloaded=0
+already_exist=0
+
 for tmpl in "${TEMPLATES[@]}"; do
-  echo "  ⬇️  Baixando $tmpl..."
-  curl -sS -L "$TEMPLATE_BASE/$tmpl" -o "$CONFIG_DIR/templates/$tmpl"
+  if [ ! -f "$CONFIG_DIR/templates/$tmpl" ]; then
+    echo "  ⬇️  Baixando $tmpl..."
+    if curl -sS -L "$TEMPLATE_BASE/$tmpl" -o "$CONFIG_DIR/templates/$tmpl"; then
+      ((downloaded++))
+    else
+      echo "  ❌ Falha ao baixar $tmpl"
+    fi
+  else
+    ((already_exist++))
+  fi
 done
-echo "✅ Templates salvos em $CONFIG_DIR/templates"
+
+if [ $downloaded -gt 0 ]; then
+  echo "✅ $downloaded novos templates baixados para $CONFIG_DIR/templates"
+fi
+if [ $already_exist -gt 0 ]; then
+  echo "ℹ️  $already_exist templates já existentes foram mantidos"
+fi
 
 echo
 echo "ℹ️  Você pode customizar os templates cloud-init (*.tmpl) localizados em: $CONFIG_DIR/templates"
