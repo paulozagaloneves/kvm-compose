@@ -12,6 +12,6 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Exibe a versão do kvm-compose",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Print(common.GetVersion())
+		fmt.Print(common.GetBuildVersion())
 	},
 }
