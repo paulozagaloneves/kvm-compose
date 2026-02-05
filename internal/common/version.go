@@ -23,7 +23,7 @@ func getDefaultIfEmpty(value, defaultValue string) string {
 }
 
 func GetVersion() string {
-	version := getDefaultIfEmpty(Version, "0.3.4")
+	version := getDefaultIfEmpty(Version, "0.3.7")
 	return version
 }
 

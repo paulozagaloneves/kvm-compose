@@ -9,7 +9,6 @@
 
 ___
 
-
 - [KVM Compose](#kvm-compose)
   - [Funcionalidades](#funcionalidades)
   - [📋 Pré-requisitos](#-pré-requisitos)
@@ -19,6 +18,7 @@ ___
     - [⚙️ Arquivo de Configuração Geral (config.ini)](#️-arquivo-de-configuração-geral-configini)
     - [🎯 Comandos Disponíveis](#-comandos-disponíveis)
 - [🐧 Instalar KVM no Ubuntu/Debian](#-instalar-kvm-no-ubuntudebian)
+  - [Conceder permissão de acesso via ACL](#conceder-permissão-de-acesso-via-acl)
   - [Resolução Local de Nomes das VMs](#resolução-local-de-nomes-das-vms)
 - [🔧 Configurar bridge de rede no Debian](#-configurar-bridge-de-rede-no-debian)
 - [🛡️ Criar chave SSH](#️-criar-chave-ssh)
@@ -29,7 +29,7 @@ ___
 
 # KVM Compose
 
-Versão 0.2.0 Codinome: "Gambiarra" - Dezembro de 2025
+Versão 0.3.7 Codinome: "Gambiarra" - Dezembro de 2025
 
 🖥️ **kvm-compose** é uma ferramenta moderna escrita em **Go** que simplifica o gerenciamento de máquinas virtuais KVM usando fluxos de trabalho similares ao Docker Compose.
 
@@ -44,7 +44,6 @@ Este projeto foi baseado em dois outros projetos, aos quais agradeço e reconhe�
 - Fluxo de trabalho simplificado para desenvolvimento e testes.
 
 ---
-
 
 ## 📋 Pré-requisitos
 
@@ -204,20 +203,32 @@ Outros tutoriais:
 - https://sysguides.com/install-kvm-on-linux
 - https://phoenixnap.com/kb/ubuntu-install-kvm
 
+## Conceder permissão de acesso via ACL
+
+```bash
+# Permite que o libvirt-qemu "entre" na tua pasta home
+sudo setfacl -m u:libvirt-qemu:x $HOME
+
+# Dá permissão de leitura e escrita nos ficheiros de imagem
+sudo setfacl -R -m u:libvirt-qemu:rwX $HOME/.config/kvm-compose/images/
+
+```
+
+
 ## Resolução Local de Nomes das VMs
 
 Para resolver os nomes das VMs localmente:
 
 1. Instale o pacote `libnss-libvirt`:
 
-   ``bash
-   udo apt install libnss-libvirt
-   ``
+   ```bash
+   sudo apt install libnss-libvirt
+   ```
 2. Edite o arquivo `/etc/nsswitch.conf`, adicionando `libvirt libvirt_guest` na linha de `hosts`:
 
-   ``
-   osts: files libvirt libvirt_guest dns
-   ``
+   ```bash
+   hosts: files libvirt libvirt_guest dns
+   ```
 
 Agora você pode acessar as VMs via SSH usando o nome da máquina.
 
