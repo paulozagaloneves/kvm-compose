@@ -96,10 +96,11 @@ TEMPLATE_BASE="https://raw.githubusercontent.com/paulozagaloneves/kvm-compose/ma
 downloaded=0
 already_exist=0
 
+set +e
 for tmpl in "${TEMPLATES[@]}"; do
   if [ ! -f "$CONFIG_DIR/templates/$tmpl" ]; then
     echo "  ⬇️  Baixando $tmpl..."
-    if curl -sS -L "$TEMPLATE_BASE/$tmpl" -o "$CONFIG_DIR/templates/$tmpl"; then
+    if curl -sS -L "$TEMPLATE_BASE/$tmpl" -o "$CONFIG_DIR/templates/$tmpl" || true; then
       ((downloaded++))
     else
       echo "  ❌ Falha ao baixar $tmpl"
@@ -115,6 +116,7 @@ fi
 if [ $already_exist -gt 0 ]; then
   echo "ℹ️  $already_exist templates já existentes foram mantidos"
 fi
+set -e
 
 echo
 echo "ℹ️  Você pode customizar os templates cloud-init (*.tmpl) localizados em: $CONFIG_DIR/templates"

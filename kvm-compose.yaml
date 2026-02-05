@@ -7,7 +7,7 @@
   username: paulo
   networks:
     - host_bridge: br0
-      guest_ipv4: 192.168.1.40
+      guest_ipv4: 192.168.1.60
 
 # k8s worker 1
 - name: k8s-wrk-01
@@ -18,7 +18,7 @@
   username: paulo
   networks:
     - host_bridge: br0
-      guest_ipv4: 192.168.1.41
+      guest_ipv4: 192.168.1.61
 
 # k8s worker 2
 - name: k8s-wrk-02
@@ -29,7 +29,7 @@
   username: paulo
   networks:
     - host_bridge: br0
-      guest_ipv4: 192.168.1.42
+      guest_ipv4: 192.168.1.62
 
 # k8s worker 3
 - name: k8s-wrk-03
@@ -40,4 +40,4 @@
   username: paulo
   networks:
     - host_bridge: br0
-      guest_ipv4: 192.168.1.43
+      guest_ipv4: 192.168.1.63
